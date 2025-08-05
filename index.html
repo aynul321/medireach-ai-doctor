@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediReach - AI-Powered Remote Health Kiosk</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4a9d9c 0%, #2d7a7a 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            color: #2d7a7a;
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #2d7a7a;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .header .tagline {
+            color: #666;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2d7a7a;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-tab:hover {
+            background: #2d7a7a;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: #2d7a7a;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #2d7a7a;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #2d7a7a;
+        }
+
+        .feature-card h3 {
+            color: #2d7a7a;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .monitor-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .monitor-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e9ecef;
+        }
+
+        .monitor-card h3 {
+            color: #2d7a7a;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .reading-display {
+            background: #2d7a7a;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2rem;
+            font-weight: bold;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .monitor-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #4a9d9c 0%, #2d7a7a 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+
+        .monitor-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .monitor-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .status-normal { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-danger { background: #dc3545; }
+
+        .medicine-search {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .medicine-search:focus {
+            border-color: #2d7a7a;
+        }
+
+        .medicine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .medicine-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #2d7a7a;
+            transition: transform 0.2s ease;
+        }
+
+        .medicine-card:hover {
+            transform: translateX(5px);
+            background: #e9ecef;
+        }
+
+        .medicine-name {
+            font-weight: bold;
+            color: #2d7a7a;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .medicine-uses {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .medicine-dosage {
+            color: #333;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .medicine-category {
+            background: #2d7a7a;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .consultation-form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: #2d7a7a;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #2d7a7a;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #4a9d9c 0%, #2d7a7a 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .mission-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .mission-card {
+            background: linear-gradient(135deg, #4a9d9c 0%, #2d7a7a 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .mission-card h4 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        .notification.warning {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .notification.info {
+            background: #17a2b8;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2d7a7a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4a9d9c, #2d7a7a);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .monitor-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MediReach</h1>
+            <div class="subtitle">AI-Powered Remote Health Kiosk for Villages & Slums</div>
+            <div class="tagline">Empowering Rural India with Accessible Healthcare</div>
+            <div style="margin-top: 20px; color: #2d7a7a; font-weight: 600;">
+                Project Leader: Mr. Aynul Memon | Visionary Technocrat
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('home')">🏠 Home</button>
+            <button class="nav-tab" onclick="showTab('monitor')">📊 Health Monitor</button>
+            <button class="nav-tab" onclick="showTab('medicines')">💊 Medicine Database</button>
+            <button class="nav-tab" onclick="showTab('consultation')">👨‍⚕️ Consultation</button>
+            <button class="nav-tab" onclick="showTab('mission')">🎯 Our Mission</button>
+        </div>
+
+        <!-- Home Tab -->
+        <div id="home" class="tab-content active">
+            <h2 style="text-align: center; color: #2d7a7a; margin-bottom: 30px; font-size: 2.5rem;">Healthcare at Your Doorstep</h2>
+            <p style="text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 40px;">
+                A smart kiosk that uses AI, sensors, and telemedicine to provide instant medical checkups, 
+                doctor consultation, and medicine dispensing – right in underserved rural areas.
+            </p>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Symptom Checker</h3>
+                    <p>Advanced AI analyzes your symptoms and provides preliminary diagnosis with treatment recommendations.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🩺</div>
+                    <h3>Diagnostic Tools</h3>
+                    <p>Integrated BP monitor, SpO2 sensor, thermometer, and other essential diagnostic equipment.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📹</div>
+                    <h3>Video Consultation</h3>
+                    <p>Real-time video calls with qualified doctors for professional medical consultation and advice.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💊</div>
+                    <h3>Medicine Dispenser</h3>
+                    <p>Automated medicine dispensing system with comprehensive database of common medications.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">☁️</div>
+                    <h3>Cloud Health Records</h3>
+                    <p>Secure cloud storage for patient health records with easy access for continued care.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Digital India Vision</h3>
+                    <p>Supporting the Digital India initiative by bringing technology to rural healthcare.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Monitor Tab -->
+        <div id="monitor" class="tab-content">
+            <h2 style="text-align: center; color: #2d7a7a; margin-bottom: 30px;">Health Monitoring System</h2>
+            
+            <div class="monitor-section">
+                <!-- Blood Pressure Monitor -->
+                <div class="monitor-card">
+                    <h3>🩸 Blood Pressure Monitor</h3>
+                    
+                    <!-- Fingerprint Sensor Section -->
+                    <div style="background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 10px; padding: 20px; margin-bottom: 20px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">👆</div>
+                        <div style="font-weight: 600; color: #2d7a7a; margin-bottom: 10px;">Fingerprint Sensor</div>
+                        <div id="bp-fingerprint-status" style="color: #666; margin-bottom: 15px;">Place finger on sensor for authentication</div>
+                        <div id="bp-fingerprint-indicator" style="width: 60px; height: 60px; border: 3px solid #dee2e6; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: #f8f9fa;">🔒</div>
+                        <button class="monitor-btn" style="background: #6c757d;" onclick="simulateFingerprint('bp')">Place Finger on Sensor</button>
+                    </div>
+
+                    <div class="reading-display" id="bp-display">
+                        Authentication required to start measurement
+                    </div>
+                    <div class="progress-bar" id="bp-progress" style="display: none;">
+                        <div class="progress-fill" id="bp-progress-fill"></div>
+                    </div>
+                    <button class="monitor-btn" id="bp-btn" onclick="measureBP()" disabled style="background: #ccc;">Start BP Measurement</button>
+                    <div id="bp-status" style="margin-top: 15px; font-weight: 600;"></div>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+                        <strong>Instructions:</strong> First authenticate with fingerprint, then sit comfortably, place arm at heart level, remain still during measurement.
+                    </div>
+                </div>
+
+                <!-- SpO2 Monitor -->
+                <div class="monitor-card">
+                    <h3>🫁 SpO2 (Oxygen Saturation) Monitor</h3>
+                    
+                    <!-- Fingerprint Sensor Section -->
+                    <div style="background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 10px; padding: 20px; margin-bottom: 20px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">👆</div>
+                        <div style="font-weight: 600; color: #2d7a7a; margin-bottom: 10px;">Fingerprint Sensor</div>
+                        <div id="spo2-fingerprint-status" style="color: #666; margin-bottom: 15px;">Place finger on sensor for authentication</div>
+                        <div id="spo2-fingerprint-indicator" style="width: 60px; height: 60px; border: 3px solid #dee2e6; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: #f8f9fa;">🔒</div>
+                        <button class="monitor-btn" style="background: #6c757d;" onclick="simulateFingerprint('spo2')">Place Finger on Sensor</button>
+                    </div>
+
+                    <div class="reading-display" id="spo2-display">
+                        Authentication required to start measurement
+                    </div>
+                    <div class="progress-bar" id="spo2-progress" style="display: none;">
+                        <div class="progress-fill" id="spo2-progress-fill"></div>
+                    </div>
+                    <button class="monitor-btn" id="spo2-btn" onclick="measureSpO2()" disabled style="background: #ccc;">Start SpO2 Measurement</button>
+                    <div id="spo2-status" style="margin-top: 15px; font-weight: 600;"></div>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+                        <strong>Instructions:</strong> First authenticate with fingerprint, then place finger on sensor, avoid movement, ensure finger is warm and clean.
+                    </div>
+                </div>
+
+                <!-- Heart Rate Monitor -->
+                <div class="monitor-card">
+                    <h3>❤️ Heart Rate Monitor</h3>
+                    
+                    <!-- Fingerprint Sensor Section -->
+                    <div style="background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 10px; padding: 20px; margin-bottom: 20px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">👆</div>
+                        <div style="font-weight: 600; color: #2d7a7a; margin-bottom: 10px;">Fingerprint Sensor</div>
+                        <div id="hr-fingerprint-status" style="color: #666; margin-bottom: 15px;">Place finger on sensor for authentication</div>
+                        <div id="hr-fingerprint-indicator" style="width: 60px; height: 60px; border: 3px solid #dee2e6; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: #f8f9fa;">🔒</div>
+                        <button class="monitor-btn" style="background: #6c757d;" onclick="simulateFingerprint('hr')">Place Finger on Sensor</button>
+                    </div>
+
+                    <div class="reading-display" id="hr-display">
+                        Authentication required to start measurement
+                    </div>
+                    <div class="progress-bar" id="hr-progress" style="display: none;">
+                        <div class="progress-fill" id="hr-progress-fill"></div>
+                    </div>
+                    <button class="monitor-btn" id="hr-btn" onclick="measureHeartRate()" disabled style="background: #ccc;">Start Heart Rate Measurement</button>
+                    <div id="hr-status" style="margin-top: 15px; font-weight: 600;"></div>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+                        <strong>Instructions:</strong> First authenticate with fingerprint, then place finger gently on sensor, breathe normally, remain calm.
+                    </div>
+                </div>
+
+                <!-- Temperature Monitor -->
+                <div class="monitor-card">
+                    <h3>🌡️ Body Temperature</h3>
+                    
+                    <!-- Fingerprint Sensor Section -->
+                    <div style="background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 10px; padding: 20px; margin-bottom: 20px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">👆</div>
+                        <div style="font-weight: 600; color: #2d7a7a; margin-bottom: 10px;">Fingerprint Sensor</div>
+                        <div id="temp-fingerprint-status" style="color: #666; margin-bottom: 15px;">Place finger on sensor for authentication</div>
+                        <div id="temp-fingerprint-indicator" style="width: 60px; height: 60px; border: 3px solid #dee2e6; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: #f8f9fa;">🔒</div>
+                        <button class="monitor-btn" style="background: #6c757d;" onclick="simulateFingerprint('temp')">Place Finger on Sensor</button>
+                    </div>
+
+                    <div class="reading-display" id="temp-display">
+                        Authentication required to start measurement
+                    </div>
+                    <div class="progress-bar" id="temp-progress" style="display: none;">
+                        <div class="progress-fill" id="temp-progress-fill"></div>
+                    </div>
+                    <button class="monitor-btn" id="temp-btn" onclick="measureTemperature()" disabled style="background: #ccc;">Start Temperature Measurement</button>
+                    <div id="temp-status" style="margin-top: 15px; font-weight: 600;"></div>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+                        <strong>Instructions:</strong> First authenticate with fingerprint, then place thermometer under tongue or forehead, wait for beep signal.
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #e8f5f5; padding: 20px; border-radius: 15px; margin-top: 30px;">
+                <h3 style="color: #2d7a7a; margin-bottom: 15px;">📋 Health Summary</h3>
+                <div id="health-summary">Take measurements to see your health summary</div>
+            </div>
+        </div>
+
+        <!-- Medicine Database Tab -->
+        <div id="medicines" class="tab-content">
+            <h2 style="text-align: center; color: #2d7a7a; margin-bottom: 30px;">Medicine Database</h2>
+            
+            <input type="text" class="medicine-search" id="medicine-search" 
+                   placeholder="🔍 Search medicines by name, condition, or symptoms..." 
+                   onkeyup="searchMedicines()">
+            
+            <div style="text-align: center; margin-bottom: 20px; color: #666;">
+                <em>Comprehensive database of 100+ common medicines for daily healthcare needs</em>
+            </div>
+            
+            <div class="medicine-grid" id="medicine-grid">
+                <!-- Medicines will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Consultation Tab -->
+        <div id="consultation" class="tab-content">
+            <h2 style="text-align: center; color: #2d7a7a; margin-bottom: 30px;">Doctor Consultation</h2>
+            
+            <div class="consultation-form" id="consultation-form">
+                <div class="form-group">
+                    <label for="patient-name">Patient Name</label>
+                    <input type="text" id="patient-name" placeholder="Enter patient's full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="patient-age">Age</label>
+                    <input type="number" id="patient-age" placeholder="Enter age" min="1" max="120" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="patient-gender">Gender</label>
+                    <select id="patient-gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="consultation-type">Consultation Type</label>
+                    <select id="consultation-type" required>
+                        <option value="">Select consultation type</option>
+                        <option value="general">General Medicine</option>
+                        <option value="pediatrics">Pediatrics</option>
+                        <option value="gynecology">Gynecology</option>
+                        <option value="cardiology">Cardiology</option>
+                        <option value="dermatology">Dermatology</option>
+                        <option value="emergency">Emergency</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="symptoms">Symptoms</label>
+                    <textarea id="symptoms" placeholder="Describe the symptoms in detail..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="medical-history">Medical History (Optional)</label>
+                    <textarea id="medical-history" placeholder="Any relevant medical history, allergies, current medications..."></textarea>
+                </div>
+                
+                <button class="submit-btn" onclick="bookConsultation()">📞 Book Video Consultation</button>
+                <button type="button" class="submit-btn" style="background: linear-gradient(135deg, #6f42c1 0%, #5a2d91 100%);" onclick="checkSymptoms()">🤖 AI Symptom Analysis</button>
+            </div>
+            
+            <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 10px; padding: 20px; margin-top: 30px;">
+                <h4 style="color: #856404; margin-bottom: 10px;">⚡ Emergency Consultation</h4>
+                <p style="color: #856404; margin-bottom: 15px;">For medical emergencies, immediate consultation is available 24/7</p>
+                <button class="submit-btn" style="background: #dc3545;" onclick="emergencyConsultation()">🚨 Emergency Consultation</button>
+            </div>
+        </div>
+
+        <!-- Mission Tab -->
+        <div id="mission" class="tab-content">
+            <div class="mission-section">
+                <h2 style="color: #2d7a7a; margin-bottom: 20px; font-size: 2.5rem;">Our Mission</h2>
+                <p style="font-size: 1.3rem; color: #2d7a7a; margin-bottom: 40px; font-weight: 600;">
+                    "Healthcare at your doorstep — for every Indian, everywhere."
+                </p>
+                
+                <div class="mission-grid">
+                    <div class="mission-card">
+                        <h4>🏥 Reduce Travel to Hospitals</h4>
+                        <p>Bringing essential healthcare services directly to rural communities, eliminating the need for long-distance travel for basic medical needs.</p>
+                    </div>
+                    
+                    <div class="mission-card">
+                        <h4>⚡ Early Diagnosis = Life-saving</h4>
+                        <p>Enable early detection and diagnosis of health conditions, preventing complications and saving lives through timely intervention.</p>
+                    </div>
+                    
+                    <div class="mission-card">
+                        <h4>🇮🇳 Build Digital India Vision</h4>
+                        <p>Contributing to India's digital transformation by integrating technology with healthcare, making medical services accessible to all.</p>
+                    </div>
+                    
+                    <div class="mission-card">
+                        <h4>💰 Cost-effective Solution</h4>
+                        <p>Providing affordable healthcare solutions that reduce medical costs for families while maintaining high-quality service standards.</p>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 30px; margin-top: 40px;">
+                    <h3 style="color: #2d7a7a; margin-bottom: 20px;">Impact Statistics</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center;">
+                        <div>
+                            <div style="font-size: 2.5rem; font-weight: bold; color: #2d7a7a;">1M+</div>
+                            <div style="color: #666;">People Served</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2.5rem; font-weight: bold; color: #2d7a7a;">500+</div>
+                            <div style="color: #666;">Villages Covered</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2.5rem; font-weight: bold; color: #2d7a7a;">24/7</div>
+                            <div style="color: #666;">Service Available</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2.5rem; font-weight: bold; color: #2d7a7a;">99%</div>
+                            <div style="color: #666;">User Satisfaction</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Complete Medicine Database (100+ medicines)
+        const medicineDatabase = [
+            { name: "Paracetamol", uses: "Fever, headache, body pain, cold symptoms", dosage: "Adult: 500-1000mg every 4-6 hours (max 4g/day)", category: "Pain Relief" },
+            { name: "Ibuprofen", uses: "Pain, inflammation, fever, arthritis", dosage: "Adult: 200-400mg every 4-6 hours (max 1200mg/day)", category: "Anti-inflammatory" },
+            { name: "Aspirin", uses: "Heart attack prevention, pain, fever, inflammation", dosage: "Adult: 75-325mg daily for heart protection", category: "Antiplatelet" },
+            { name: "Amoxicillin", uses: "Bacterial infections, pneumonia, bronchitis", dosage: "Adult: 250-500mg every 8 hours", category: "Antibiotic" },
+            { name: "Ciprofloxacin", uses: "UTI, respiratory infections, skin infections", dosage: "Adult: 250-500mg every 12 hours", category: "Antibiotic" },
+            { name: "Metformin", uses: "Type 2 diabetes, blood sugar control", dosage: "Adult: 500-1000mg twice daily with meals", category: "Antidiabetic" },
+            { name: "Lisinopril", uses: "High blood pressure, heart failure", dosage: "Adult: 5-40mg once daily", category: "ACE Inhibitor" },
+            { name: "Amlodipine", uses: "High blood pressure, chest pain (angina)", dosage: "Adult: 2.5-10mg once daily", category: "Calcium Channel Blocker" },
+            { name: "Atorvastatin", uses: "High cholesterol, heart disease prevention", dosage: "Adult: 10-80mg once daily at bedtime", category: "Statin" },
+            { name: "Omeprazole", uses: "Acid reflux, stomach ulcers, GERD", dosage: "Adult: 20-40mg once daily before breakfast", category: "Proton Pump Inhibitor" },
+            { name: "Cetirizine", uses: "Allergies, hay fever, itching, hives", dosage: "Adult: 10mg once daily", category: "Antihistamine" },
+            { name: "Loratadine", uses: "Seasonal allergies, runny nose, sneezing", dosage: "Adult: 10mg once daily", category: "Antihistamine" },
+            { name: "Dextromethorphan", uses: "Dry cough, cold symptoms", dosage: "Adult: 15-30mg every 4 hours (max 120mg/day)", category: "Cough Suppressant" },
+            { name: "Guaifenesin", uses: "Chest congestion, productive cough", dosage: "Adult: 200-400mg every 4 hours", category: "Expectorant" },
+            { name: "Diphenhydramine", uses: "Allergies, insomnia, motion sickness", dosage: "Adult: 25-50mg every 4-6 hours", category: "Antihistamine" },
+            { name: "Hydrocortisone", uses: "Skin inflammation, eczema, rashes", dosage: "Apply thin layer 2-3 times daily", category: "Topical Steroid" },
+            { name: "Salbutamol", uses: "Asthma, COPD, bronchospasm", dosage: "2 puffs every 4-6 hours as needed", category: "Bronchodilator" },
+            { name: "Prednisolone", uses: "Inflammation, asthma, allergies, arthritis", dosage: "Adult: 5-60mg daily as prescribed", category: "Corticosteroid" },
+            { name: "Diclofenac", uses: "Pain, inflammation, arthritis, muscle pain", dosage: "Adult: 50mg 2-3 times daily with food", category: "NSAID" },
+            { name: "Ranitidine", uses: "Heartburn, acid indigestion, stomach ulcers", dosage: "Adult: 150mg twice daily or 300mg at bedtime", category: "H2 Blocker" },
+            { name: "Azithromycin", uses: "Respiratory infections, skin infections", dosage: "Adult: 500mg once daily for 3 days", category: "Antibiotic" },
+            { name: "Doxycycline", uses: "Bacterial infections, acne, malaria prevention", dosage: "Adult: 100mg twice daily", category: "Antibiotic" },
+            { name: "Fluticasone", uses: "Allergic rhinitis, asthma", dosage: "2 sprays each nostril once daily", category: "Nasal Steroid" },
+            { name: "Levothyroxine", uses: "Hypothyroidism, thyroid hormone replacement", dosage: "Adult: 25-200mcg once daily on empty stomach", category: "Thyroid Hormone" },
+            { name: "Metoprolol", uses: "High blood pressure, chest pain, heart failure", dosage: "Adult: 25-100mg twice daily", category: "Beta Blocker" },
+            { name: "Losartan", uses: "High blood pressure, diabetic kidney disease", dosage: "Adult: 25-100mg once daily", category: "ARB" },
+            { name: "Furosemide", uses: "Fluid retention, high blood pressure", dosage: "Adult: 20-80mg once or twice daily", category: "Diuretic" },
+            { name: "Gabapentin", uses: "Nerve pain, seizures, restless leg syndrome", dosage: "Adult: 300mg 1-3 times daily", category: "Anticonvulsant" },
+            { name: "Tramadol", uses: "Moderate to severe pain", dosage: "Adult: 50-100mg every 4-6 hours", category: "Pain Relief" },
+            { name: "Codeine", uses: "Mild to moderate pain, cough", dosage: "Adult: 15-60mg every 4 hours", category: "Opioid" },
+            { name: "Morphine", uses: "Severe pain management", dosage: "Adult: 5-30mg every 4 hours as needed", category: "Opioid" },
+            { name: "Insulin", uses: "Type 1 and Type 2 diabetes", dosage: "Varies based on blood sugar levels", category: "Antidiabetic" },
+            { name: "Warfarin", uses: "Blood clot prevention, atrial fibrillation", dosage: "Adult: 2-10mg daily based on INR", category: "Anticoagulant" },
+            { name: "Clopidogrel", uses: "Heart attack prevention, stroke prevention", dosage: "Adult: 75mg once daily", category: "Antiplatelet" },
+            { name: "Digoxin", uses: "Heart failure, atrial fibrillation", dosage: "Adult: 0.125-0.25mg once daily", category: "Cardiac Glycoside" },
+            { name: "Albuterol", uses: "Asthma, COPD, bronchospasm", dosage: "2 puffs every 4-6 hours as needed", category: "Bronchodilator" },
+            { name: "Prednisone", uses: "Inflammation, autoimmune conditions", dosage: "Adult: 5-60mg daily as prescribed", category: "Corticosteroid" },
+            { name: "Hydroxyzine", uses: "Anxiety, allergies, itching", dosage: "Adult: 25-100mg 3-4 times daily", category: "Antihistamine" },
+            { name: "Clonazepam", uses: "Anxiety, panic disorder, seizures", dosage: "Adult: 0.5-2mg twice daily", category: "Benzodiazepine" },
+            { name: "Alprazolam", uses: "Anxiety, panic disorder", dosage: "Adult: 0.25-2mg 2-3 times daily", category: "Benzodiazepine" },
+            { name: "Zolpidem", uses: "Insomnia, sleep disorders", dosage: "Adult: 5-10mg at bedtime", category: "Sleep Aid" },
+            { name: "Sertraline", uses: "Depression, anxiety, PTSD", dosage: "Adult: 50-200mg once daily", category: "Antidepressant" },
+            { name: "Fluoxetine", uses: "Depression, anxiety, OCD", dosage: "Adult: 20-80mg once daily", category: "Antidepressant" },
+            { name: "Escitalopram", uses: "Depression, generalized anxiety disorder", dosage: "Adult: 10-20mg once daily", category: "Antidepressant" },
+            { name: "Bupropion", uses: "Depression, smoking cessation", dosage: "Adult: 150-300mg daily", category: "Antidepressant" },
+            { name: "Trazodone", uses: "Depression, insomnia", dosage: "Adult: 50-300mg at bedtime", category: "Antidepressant" },
+            { name: "Risperidone", uses: "Schizophrenia, bipolar disorder", dosage: "Adult: 1-6mg twice daily", category: "Antipsychotic" },
+            { name: "Olanzapine", uses: "Schizophrenia, bipolar disorder", dosage: "Adult: 5-20mg once daily", category: "Antipsychotic" },
+            { name: "Lithium", uses: "Bipolar disorder, mania", dosage: "Adult: 300-1200mg daily in divided doses", category: "Mood Stabilizer" },
+            { name: "Phenytoin", uses: "Seizures, epilepsy", dosage: "Adult: 300-400mg daily", category: "Anticonvulsant" },
+            { name: "Carbamazepine", uses: "Seizures, trigeminal neuralgia", dosage: "Adult: 200mg twice daily initially", category: "Anticonvulsant" },
+            { name: "Valproic Acid", uses: "Seizures, bipolar disorder, migraines", dosage: "Adult: 250mg twice daily initially", category: "Anticonvulsant" },
+            { name: "Levetiracetam", uses: "Seizures, epilepsy", dosage: "Adult: 500mg twice daily initially", category: "Anticonvulsant" },
+            { name: "Topiramate", uses: "Seizures, migraine prevention", dosage: "Adult: 25mg twice daily initially", category: "Anticonvulsant" },
+            { name: "Sumatriptan", uses: "Migraine headaches", dosage: "Adult: 25-100mg at onset of migraine", category: "Antimigraine" },
+            { name: "Rizatriptan", uses: "Migraine headaches", dosage: "Adult: 5-10mg at onset of migraine", category: "Antimigraine" },
+            { name: "Propranolol", uses: "High blood pressure, migraines, anxiety", dosage: "Adult: 40-320mg daily in divided doses", category: "Beta Blocker" },
+            { name: "Timolol", uses: "Glaucoma, high blood pressure", dosage: "Eye drops: 1 drop twice daily", category: "Beta Blocker" },
+            { name: "Latanoprost", uses: "Glaucoma, ocular hypertension", dosage: "Eye drops: 1 drop once daily at bedtime", category: "Prostaglandin Analog" },
+            { name: "Brimonidine", uses: "Glaucoma, ocular hypertension", dosage: "Eye drops: 1 drop 2-3 times daily", category: "Alpha Agonist" },
+            { name: "Erythromycin", uses: "Bacterial infections, acne", dosage: "Adult: 250-500mg every 6 hours", category: "Antibiotic" },
+            { name: "Clarithromycin", uses: "Respiratory infections, H. pylori", dosage: "Adult: 250-500mg twice daily", category: "Antibiotic" },
+            { name: "Levofloxacin", uses: "Bacterial infections, pneumonia", dosage: "Adult: 250-750mg once daily", category: "Antibiotic" },
+            { name: "Moxifloxacin", uses: "Respiratory infections, skin infections", dosage: "Adult: 400mg once daily", category: "Antibiotic" },
+            { name: "Cephalexin", uses: "Skin infections, UTI, respiratory infections", dosage: "Adult: 250-1000mg every 6 hours", category: "Antibiotic" },
+            { name: "Clindamycin", uses: "Skin infections, dental infections", dosage: "Adult: 150-450mg every 6 hours", category: "Antibiotic" },
+            { name: "Metronidazole", uses: "Anaerobic infections, C. diff", dosage: "Adult: 250-500mg 2-3 times daily", category: "Antibiotic" },
+            { name: "Trimethoprim-Sulfamethoxazole", uses: "UTI, pneumonia, traveler's diarrhea", dosage: "Adult: 1 DS tablet twice daily", category: "Antibiotic" },
+            { name: "Nitrofurantoin", uses: "UTI prevention and treatment", dosage: "Adult: 50-100mg every 6 hours", category: "Antibiotic" },
+            { name: "Acyclovir", uses: "Herpes infections, chickenpox, shingles", dosage: "Adult: 200-800mg 5 times daily", category: "Antiviral" },
+            { name: "Valacyclovir", uses: "Herpes infections, cold sores", dosage: "Adult: 500-1000mg twice daily", category: "Antiviral" },
+            { name: "Oseltamivir", uses: "Influenza treatment and prevention", dosage: "Adult: 75mg twice daily for 5 days", category: "Antiviral" },
+            { name: "Fluconazole", uses: "Yeast infections, candidiasis", dosage: "Adult: 150mg single dose or 100mg daily", category: "Antifungal" },
+            { name: "Nystatin", uses: "Oral thrush, skin fungal infections", dosage: "Swish and swallow 4-6 times daily", category: "Antifungal" },
+            { name: "Terbinafine", uses: "Nail fungus, athlete's foot", dosage: "Adult: 250mg once daily for 6-12 weeks", category: "Antifungal" },
+            { name: "Ketoconazole", uses: "Fungal infections, dandruff", dosage: "Adult: 200mg once daily with food", category: "Antifungal" },
+            { name: "Miconazole", uses: "Vaginal yeast infections, skin fungus", dosage: "Apply to affected area twice daily", category: "Antifungal" },
+            { name: "Clotrimazole", uses: "Vaginal yeast infections, athlete's foot", dosage: "Apply to affected area 2-3 times daily", category: "Antifungal" },
+            { name: "Mupirocin", uses: "Bacterial skin infections, impetigo", dosage: "Apply to affected area 3 times daily", category: "Topical Antibiotic" },
+            { name: "Bacitracin", uses: "Minor cuts, scrapes, burns", dosage: "Apply to affected area 1-3 times daily", category: "Topical Antibiotic" },
+            { name: "Neomycin", uses: "Skin infections, wound care", dosage: "Apply to affected area 1-3 times daily", category: "Topical Antibiotic" },
+            { name: "Silver Sulfadiazine", uses: "Burns, wound infections", dosage: "Apply to affected area 1-2 times daily", category: "Topical Antibiotic" },
+            { name: "Tretinoin", uses: "Acne, anti-aging, psoriasis", dosage: "Apply thin layer once daily at bedtime", category: "Retinoid" },
+            { name: "Adapalene", uses: "Acne treatment", dosage: "Apply thin layer once daily at bedtime", category: "Retinoid" },
+            { name: "Benzoyl Peroxide", uses: "Acne treatment", dosage: "Apply to affected area 1-2 times daily", category: "Acne Treatment" },
+            { name: "Salicylic Acid", uses: "Acne, warts, dandruff", dosage: "Apply to affected area 1-3 times daily", category: "Keratolytic" },
+            { name: "Calamine", uses: "Itching, poison ivy, insect bites", dosage: "Apply to affected area as needed", category: "Topical" },
+            { name: "Zinc Oxide", uses: "Diaper rash, sunscreen, wound protection", dosage: "Apply to affected area as needed", category: "Topical Protectant" },
+            { name: "Petroleum Jelly", uses: "Dry skin, wound protection, chapped lips", dosage: "Apply to affected area as needed", category: "Emollient" },
+            { name: "Aloe Vera", uses: "Burns, sunburn, skin irritation", dosage: "Apply to affected area as needed", category: "Natural Remedy" },
+            { name: "Witch Hazel", uses: "Hemorrhoids, skin irritation, astringent", dosage: "Apply to affected area 3-4 times daily", category: "Astringent" },
+            { name: "Capsaicin", uses: "Arthritis pain, neuropathic pain", dosage: "Apply to affected area 3-4 times daily", category: "Topical Analgesic" },
+            { name: "Menthol", uses: "Muscle pain, cough, congestion", dosage: "Apply or inhale as directed", category: "Topical Analgesic" },
+            { name: "Camphor", uses: "Cough, muscle pain, skin irritation", dosage: "Apply to affected area or inhale", category: "Topical Analgesic" },
+            { name: "Eucalyptus", uses: "Cough, congestion, muscle pain", dosage: "Apply topically or inhale as directed", category: "Natural Remedy" },
+            { name: "Tea Tree Oil", uses: "Acne, fungal infections, antiseptic", dosage: "Apply diluted to affected area", category: "Natural Remedy" },
+            { name: "Coconut Oil", uses: "Dry skin, hair care, wound healing", dosage: "Apply to affected area as needed", category: "Natural Remedy" },
+            { name: "Turmeric", uses: "Inflammation, wound healing, pain", dosage: "500mg 1-3 times daily", category: "Natural Remedy" },
+            { name: "Ginger", uses: "Nausea, motion sickness, inflammation", dosage: "250-1000mg daily", category: "Natural Remedy" },
+            { name: "Garlic", uses: "High cholesterol, blood pressure, infections", dosage: "600-1200mg daily", category: "Natural Remedy" },
+            { name: "Echinacea", uses: "Cold prevention, immune support", dosage: "300mg 3 times daily", category: "Natural Remedy" },
+            { name: "Elderberry", uses: "Cold, flu, immune support", dosage: "15ml syrup daily", category: "Natural Remedy" },
+            { name: "Probiotics", uses: "Digestive health, immune support", dosage: "1-10 billion CFU daily", category: "Supplement" },
+            { name: "Vitamin D", uses: "Bone health, immune function", dosage: "1000-4000 IU daily", category: "Vitamin" },
+            { name: "Vitamin C", uses: "Immune support, antioxidant", dosage: "500-1000mg daily", category: "Vitamin" },
+            { name: "Vitamin B12", uses: "Energy, nerve function, anemia", dosage: "2.4mcg daily", category: "Vitamin" },
+            { name: "Iron", uses: "Anemia, fatigue, restless leg syndrome", dosage: "18-65mg daily", category: "Mineral" },
+            { name: "Calcium", uses: "Bone health, muscle function", dosage: "1000-1200mg daily", category: "Mineral" },
+            { name: "Magnesium", uses: "Muscle cramps, sleep, anxiety", dosage: "200-400mg daily", category: "Mineral" },
+            { name: "Zinc", uses: "Immune function, wound healing", dosage: "8-11mg daily", category: "Mineral" },
+            { name: "Omega-3", uses: "Heart health, brain function, inflammation", dosage: "1000-2000mg daily", category: "Supplement" },
+            { name: "Melatonin", uses: "Sleep disorders, jet lag", dosage: "0.5-5mg at bedtime", category: "Sleep Aid" },
+            { name: "Valerian Root", uses: "Insomnia, anxiety, stress", dosage: "300-600mg at bedtime", category: "Natural Remedy" },
+            { name: "St. John's Wort", uses: "Mild depression, anxiety", dosage: "300mg 3 times daily", category: "Natural Remedy" },
+            { name: "Ginkgo Biloba", uses: "Memory, circulation, cognitive function", dosage: "120-240mg daily", category: "Natural Remedy" },
+            { name: "Saw Palmetto", uses: "Prostate health, hair loss", dosage: "160mg twice daily", category: "Natural Remedy" },
+            { name: "Cranberry", uses: "UTI prevention, urinary health", dosage: "500mg twice daily", category: "Natural Remedy" },
+            { name: "Milk Thistle", uses: "Liver health, hepatitis", dosage: "200mg 3 times daily", category: "Natural Remedy" },
+            { name: "Glucosamine", uses: "Joint health, arthritis", dosage: "1500mg daily", category: "Supplement" },
+            { name: "Chondroitin", uses: "Joint health, arthritis", dosage: "1200mg daily", category: "Supplement" },
+            { name: "Coenzyme Q10", uses: "Heart health, energy production", dosage: "100-200mg daily", category: "Supplement" },
+            { name: "Alpha Lipoic Acid", uses: "Diabetes, neuropathy, antioxidant", dosage: "300-600mg daily", category: "Supplement" }
+        ];
+
+        // Health monitoring variables
+        let healthData = {
+            bp: null,
+            spo2: null,
+            heartRate: null,
+            temperature: null
+        };
+
+        // Fingerprint authentication system
+        let fingerprintDatabase = [
+            { id: 'FP001', name: 'John Doe', pattern: 'arch_whorl_loop' },
+            { id: 'FP002', name: 'Jane Smith', pattern: 'loop_arch_whorl' },
+            { id: 'FP003', name: 'Admin User', pattern: 'whorl_loop_arch' },
+            { id: 'FP004', name: 'Guest User', pattern: 'loop_whorl_arch' }
+        ];
+
+        let isFingerOnSensor = false;
+        let authenticatedUser = null;
+
+        // Fingerprint authentication functions
+        function simulateFingerprint(deviceType) {
+            const statusElement = document.getElementById(`${deviceType}-fingerprint-status`);
+            const indicatorElement = document.getElementById(`${deviceType}-fingerprint-indicator`);
+            const button = event.target;
+
+            // Reset authentication state for this device
+            authenticatedUser = null;
+            
+            // Show scanning animation
+            statusElement.textContent = 'Scanning fingerprint...';
+            indicatorElement.innerHTML = '🔍';
+            indicatorElement.style.background = '#fff3cd';
+            indicatorElement.style.borderColor = '#ffc107';
+            button.disabled = true;
+            button.innerHTML = '<span class="loading"></span> Scanning...';
+
+            setTimeout(() => {
+                // Simulate finger detection
+                const fingerDetected = Math.random() > 0.2; // 80% chance finger is detected
+                
+                if (!fingerDetected) {
+                    // No finger detected
+                    statusElement.textContent = '❌ No finger detected on sensor';
+                    statusElement.style.color = '#dc3545';
+                    indicatorElement.innerHTML = '❌';
+                    indicatorElement.style.background = '#f8d7da';
+                    indicatorElement.style.borderColor = '#dc3545';
+                    button.disabled = false;
+                    button.innerHTML = 'Place Finger on Sensor';
+                    showNotification('Please place your finger properly on the sensor', 'error');
+                    return;
+                }
+
+                // Finger detected, now check authentication
+                statusElement.textContent = 'Finger detected, authenticating...';
+                statusElement.style.color = '#0c5460';
+                indicatorElement.innerHTML = '🔄';
+                indicatorElement.style.background = '#d1ecf1';
+                indicatorElement.style.borderColor = '#bee5eb';
+
+                setTimeout(() => {
+                    // Simulate authentication check
+                    const authSuccess = Math.random() > 0.3; // 70% success rate
+                    
+                    if (authSuccess) {
+                        // Authentication successful
+                        const randomUser = fingerprintDatabase[Math.floor(Math.random() * fingerprintDatabase.length)];
+                        authenticatedUser = randomUser;
+                        
+                        statusElement.textContent = `✅ Authenticated: ${randomUser.name}`;
+                        statusElement.style.color = '#155724';
+                        indicatorElement.innerHTML = '✅';
+                        indicatorElement.style.background = '#d4edda';
+                        indicatorElement.style.borderColor = '#28a745';
+                        
+                        // Enable measurement button
+                        const measureBtn = document.getElementById(`${deviceType}-btn`);
+                        measureBtn.disabled = false;
+                        measureBtn.style.background = 'linear-gradient(135deg, #4a9d9c 0%, #2d7a7a 100%)';
+                        
+                        // Update display
+                        document.getElementById(`${deviceType}-display`).textContent = 'Ready for measurement - Click Start';
+                        
+                        button.innerHTML = '🔒 Re-authenticate';
+                        button.disabled = false;
+                        
+                        showNotification(`Authentication successful! Welcome ${randomUser.name}`, 'success');
+                        
+                        // Auto-expire authentication after 5 minutes
+                        setTimeout(() => {
+                            if (authenticatedUser && authenticatedUser.id === randomUser.id) {
+                                resetAuthentication(deviceType);
+                                showNotification('Authentication expired. Please re-authenticate.', 'warning');
+                            }
+                        }, 300000); // 5 minutes
+                        
+                    } else {
+                        // Authentication failed
+                        statusElement.textContent = '❌ Fingerprint not recognized';
+                        statusElement.style.color = '#dc3545';
+                        indicatorElement.innerHTML = '❌';
+                        indicatorElement.style.background = '#f8d7da';
+                        indicatorElement.style.borderColor = '#dc3545';
+                        button.disabled = false;
+                        button.innerHTML = 'Try Again';
+                        
+                        showNotification('Fingerprint not recognized. Please try again or contact administrator.', 'error');
+                    }
+                }, 2000);
+            }, 1500);
+        }
+
+        function resetAuthentication(deviceType) {
+            authenticatedUser = null;
+            const statusElement = document.getElementById(`${deviceType}-fingerprint-status`);
+            const indicatorElement = document.getElementById(`${deviceType}-fingerprint-indicator`);
+            const measureBtn = document.getElementById(`${deviceType}-btn`);
+            const display = document.getElementById(`${deviceType}-display`);
+            
+            statusElement.textContent = 'Place finger on sensor for authentication';
+            statusElement.style.color = '#666';
+            indicatorElement.innerHTML = '🔒';
+            indicatorElement.style.background = '#f8f9fa';
+            indicatorElement.style.borderColor = '#dee2e6';
+            
+            measureBtn.disabled = true;
+            measureBtn.style.background = '#ccc';
+            display.textContent = 'Authentication required to start measurement';
+        }
+
+        function checkAuthentication(deviceType) {
+            if (!authenticatedUser) {
+                showNotification('Please authenticate with fingerprint first', 'error');
+                return false;
+            }
+            return true;
+        }
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabs = document.getElementsByClassName('tab-content');
+            for (let tab of tabs) {
+                tab.classList.remove('active');
+            }
+
+            // Remove active class from all nav tabs
+            const navTabs = document.getElementsByClassName('nav-tab');
+            for (let navTab of navTabs) {
+                navTab.classList.remove('active');
+            }
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+
+            // Load medicines when medicines tab is opened
+            if (tabName === 'medicines') {
+                loadMedicines();
+            }
+        }
+
+        // Load and display medicines
+        function loadMedicines() {
+            const medicineGrid = document.getElementById('medicine-grid');
+            medicineGrid.innerHTML = '';
+
+            medicineDatabase.forEach(medicine => {
+                const medicineCard = document.createElement('div');
+                medicineCard.className = 'medicine-card';
+                medicineCard.innerHTML = `
+                    <div class="medicine-name">${medicine.name}</div>
+                    <div class="medicine-uses"><strong>Uses:</strong> ${medicine.uses}</div>
+                    <div class="medicine-dosage"><strong>Dosage:</strong> ${medicine.dosage}</div>
+                    <div class="medicine-category">${medicine.category}</div>
+                `;
+                medicineGrid.appendChild(medicineCard);
+            });
+        }
+
+        // Search medicines function
+        function searchMedicines() {
+            const searchTerm = document.getElementById('medicine-search').value.toLowerCase();
+            const medicineGrid = document.getElementById('medicine-grid');
+            
+            if (searchTerm === '') {
+                loadMedicines();
+                return;
+            }
+
+            const filteredMedicines = medicineDatabase.filter(medicine => 
+                medicine.name.toLowerCase().includes(searchTerm) ||
+                medicine.uses.toLowerCase().includes(searchTerm) ||
+                medicine.category.toLowerCase().includes(searchTerm)
+            );
+
+            medicineGrid.innerHTML = '';
+            
+            if (filteredMedicines.length === 0) {
+                medicineGrid.innerHTML = '<div style="text-align: center; color: #666; padding: 40px;">No medicines found matching your search.</div>';
+                return;
+            }
+
+            filteredMedicines.forEach(medicine => {
+                const medicineCard = document.createElement('div');
+                medicineCard.className = 'medicine-card';
+                medicineCard.innerHTML = `
+                    <div class="medicine-name">${medicine.name}</div>
+                    <div class="medicine-uses"><strong>Uses:</strong> ${medicine.uses}</div>
+                    <div class="medicine-dosage"><strong>Dosage:</strong> ${medicine.dosage}</div>
+                    <div class="medicine-category">${medicine.category}</div>
+                `;
+                medicineGrid.appendChild(medicineCard);
+            });
+        }
+
+        // Simulate measurement with progress bar
+        function simulateMeasurement(type, duration, callback) {
+            const progressBar = document.getElementById(`${type}-progress`);
+            const progressFill = document.getElementById(`${type}-progress-fill`);
+            const btn = document.getElementById(`${type}-btn`);
+            const display = document.getElementById(`${type}-display`);
+
+            // Show progress bar and disable button
+            progressBar.style.display = 'block';
+            btn.disabled = true;
+            btn.innerHTML = `<span class="loading"></span> Measuring...`;
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 100 / (duration / 100);
+                progressFill.style.width = `${Math.min(progress, 100)}%`;
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    progressBar.style.display = 'none';
+                    btn.disabled = false;
+                    btn.innerHTML = `Start ${type.toUpperCase()} Measurement`;
+                    callback();
+                }
+            }, 100);
+        }
+
+        // Blood Pressure Measurement
+        function measureBP() {
+            if (!checkAuthentication('bp')) {
+                return;
+            }
+
+            simulateMeasurement('bp', 8000, () => {
+                const systolic = Math.floor(Math.random() * (140 - 110) + 110);
+                const diastolic = Math.floor(Math.random() * (90 - 70) + 70);
+                const reading = `${systolic}/${diastolic} mmHg`;
+                
+                document.getElementById('bp-display').textContent = reading;
+                healthData.bp = { systolic, diastolic };
+
+                let status = '';
+                let statusClass = '';
+                
+                if (systolic < 120 && diastolic < 80) {
+                    status = 'Normal Blood Pressure';
+                    statusClass = 'status-normal';
+                } else if (systolic <= 139 || diastolic <= 89) {
+                    status = 'Elevated Blood Pressure';
+                    statusClass = 'status-warning';
+                } else {
+                    status = 'High Blood Pressure - Consult Doctor';
+                    statusClass = 'status-danger';
+                }
+
+                document.getElementById('bp-status').innerHTML = `<span class="status-indicator ${statusClass}"></span>${status}`;
+                updateHealthSummary();
+                showNotification('Blood pressure measurement completed!', 'success');
+            });
+        }
+
+        // SpO2 Measurement
+        function measureSpO2() {
+            if (!checkAuthentication('spo2')) {
+                return;
+            }
+
+            simulateMeasurement('spo2', 5000, () => {
+                const spo2 = Math.floor(Math.random() * (100 - 95) + 95);
+                const reading = `${spo2}%`;
+                
+                document.getElementById('spo2-display').textContent = reading;
+                healthData.spo2 = spo2;
+
+                let status = '';
+                let statusClass = '';
+                
+                if (spo2 >= 95) {
+                    status = 'Normal Oxygen Saturation';
+                    statusClass = 'status-normal';
+                } else if (spo2 >= 90) {
+                    status = 'Low Oxygen - Monitor Closely';
+                    statusClass = 'status-warning';
+                } else {
+                    status = 'Critical - Seek Immediate Medical Help';
+                    statusClass = 'status-danger';
+                }
+
+                document.getElementById('spo2-status').innerHTML = `<span class="status-indicator ${statusClass}"></span>${status}`;
+                updateHealthSummary();
+                showNotification('SpO2 measurement completed!', 'success');
+            });
+        }
+
+        // Heart Rate Measurement
+        function measureHeartRate() {
+            if (!checkAuthentication('hr')) {
+                return;
+            }
+
+            simulateMeasurement('hr', 6000, () => {
+                const heartRate = Math.floor(Math.random() * (100 - 60) + 60);
+                const reading = `${heartRate} BPM`;
+                
+                document.getElementById('hr-display').textContent = reading;
+                healthData.heartRate = heartRate;
+
+                let status = '';
+                let statusClass = '';
+                
+                if (heartRate >= 60 && heartRate <= 100) {
+                    status = 'Normal Heart Rate';
+                    statusClass = 'status-normal';
+                } else if ((heartRate >= 50 && heartRate < 60) || (heartRate > 100 && heartRate <= 120)) {
+                    status = 'Irregular Heart Rate - Monitor';
+                    statusClass = 'status-warning';
+                } else {
+                    status = 'Abnormal Heart Rate - Consult Doctor';
+                    statusClass = 'status-danger';
+                }
+
+                document.getElementById('hr-status').innerHTML = `<span class="status-indicator ${statusClass}"></span>${status}`;
+                updateHealthSummary();
+                showNotification('Heart rate measurement completed!', 'success');
+            });
+        }
+
+        // Temperature Measurement
+        function measureTemperature() {
+            simulateMeasurement('temp', 4000, () => {
+                const temp = (Math.random() * (101.5 - 97.5) + 97.5).toFixed(1);
+                const reading = `${temp}°F`;
+                
+                document.getElementById('temp-display').textContent = reading;
+                healthData.temperature = parseFloat(temp);
+
+                let status = '';
+                let statusClass = '';
+                
+                if (temp >= 97.5 && temp <= 99.5) {
+                    status = 'Normal Body Temperature';
+                    statusClass = 'status-normal';
+                } else if (temp > 99.5 && temp <= 102) {
+                    status = 'Fever - Rest and Hydrate';
+                    statusClass = 'status-warning';
+                } else {
+                    status = 'High Fever - Seek Medical Attention';
+                    statusClass = 'status-danger';
+                }
+
+                document.getElementById('temp-status').innerHTML = `<span class="status-indicator ${statusClass}"></span>${status}`;
+                updateHealthSummary();
+                showNotification('Temperature measurement completed!', 'success');
+            });
+        }
+
+        // Update Health Summary
+        function updateHealthSummary() {
+            const summary = document.getElementById('health-summary');
+            let summaryHTML = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">';
+
+            if (healthData.bp) {
+                summaryHTML += `<div><strong>Blood Pressure:</strong> ${healthData.bp.systolic}/${healthData.bp.diastolic} mmHg</div>`;
+            }
+            if (healthData.spo2) {
+                summaryHTML += `<div><strong>SpO2:</strong> ${healthData.spo2}%</div>`;
+            }
+            if (healthData.heartRate) {
+                summaryHTML += `<div><strong>Heart Rate:</strong> ${healthData.heartRate} BPM</div>`;
+            }
+            if (healthData.temperature) {
+                summaryHTML += `<div><strong>Temperature:</strong> ${healthData.temperature}°F</div>`;
+            }
+
+            summaryHTML += '</div>';
+
+            if (Object.values(healthData).some(value => value !== null)) {
+                const measurementCount = Object.values(healthData).filter(value => value !== null).length;
+                summaryHTML += `<div style="margin-top: 15px; padding: 10px; background: #d4edda; border-radius: 8px; color: #155724;"><strong>Health Check Progress:</strong> ${measurementCount}/4 measurements completed</div>`;
+            }
+
+            summary.innerHTML = summaryHTML;
+        }
+
+        // Consultation Functions
+        function bookConsultation() {
+            const name = document.getElementById('patient-name').value;
+            const age = document.getElementById('patient-age').value;
+            const gender = document.getElementById('patient-gender').value;
+            const consultationType = document.getElementById('consultation-type').value;
+            const symptoms = document.getElementById('symptoms').value;
+
+            if (!name || !age || !gender || !consultationType || !symptoms) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Simulate booking process
+            showNotification('Booking consultation...', 'info');
+            
+            setTimeout(() => {
+                const consultationId = 'CONS' + Math.floor(Math.random() * 10000);
+                showNotification(`Consultation booked successfully! ID: ${consultationId}. Doctor will call you within 15 minutes.`, 'success');
+                
+                // Clear form
+                document.getElementById('consultation-form').reset();
+            }, 2000);
+        }
+
+        function checkSymptoms() {
+            const symptoms = document.getElementById('symptoms').value;
+            
+            if (!symptoms) {
+                showNotification('Please describe your symptoms first', 'error');
+                return;
+            }
+
+            showNotification('AI analyzing symptoms...', 'info');
+
+            setTimeout(() => {
+                // Simple AI symptom analysis simulation
+                const commonConditions = [
+                    { condition: 'Common Cold', probability: '85%', recommendation: 'Rest, fluids, paracetamol for fever' },
+                    { condition: 'Viral Fever', probability: '70%', recommendation: 'Monitor temperature, rest, increase fluid intake' },
+                    { condition: 'Gastritis', probability: '60%', recommendation: 'Avoid spicy food, take antacids, consult doctor if severe' },
+                    { condition: 'Migraine', probability: '75%', recommendation: 'Rest in dark room, pain relievers, avoid triggers' },
+                    { condition: 'Allergic Reaction', probability: '65%', recommendation: 'Identify allergen, antihistamines, seek help if severe' }
+                ];
+
+                const randomCondition = commonConditions[Math.floor(Math.random() * commonConditions.length)];
+                
+                const analysisResult = `
+                    <div style="background: #e8f4fd; border: 1px solid #bee5eb; border-radius: 10px; padding: 20px; margin-top: 20px;">
+                        <h4 style="color: #0c5460; margin-bottom: 15px;">🤖 AI Analysis Result</h4>
+                        <p><strong>Most Likely Condition:</strong> ${randomCondition.condition}</p>
+                        <p><strong>Confidence Level:</strong> ${randomCondition.probability}</p>
+                        <p><strong>Recommendation:</strong> ${randomCondition.recommendation}</p>
+                        <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px; color: #856404;">
+                            <small><strong>Disclaimer:</strong> This is an AI-generated analysis for informational purposes only. Please consult a qualified doctor for proper diagnosis and treatment.</small>
+                        </div>
+                    </div>
+                `;
+
+                // Add analysis result to the consultation section
+                const existingResult = document.querySelector('.ai-analysis-result');
+                if (existingResult) {
+                    existingResult.remove();
+                }
+
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'ai-analysis-result';
+                resultDiv.innerHTML = analysisResult;
+                document.getElementById('consultation-form').appendChild(resultDiv);
+
+                showNotification('AI symptom analysis completed!', 'success');
+            }, 3000);
+        }
+
+        function emergencyConsultation() {
+            showNotification('Connecting to emergency consultation...', 'info');
+            
+            setTimeout(() => {
+                showNotification('Emergency consultation activated! Doctor will join in 2 minutes. Please remain calm.', 'success');
+            }, 1500);
+        }
+
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load medicines on page load
+            loadMedicines();
+            
+            // Add welcome message
+            setTimeout(() => {
+                showNotification('Welcome to MediReach! Your health companion is ready.', 'info');
+            }, 1000);
+        });
+
+        // Simulate real-time health monitoring (optional feature)
+        function startContinuousMonitoring() {
+            setInterval(() => {
+                // This could be connected to real sensors
+                console.log('Continuous monitoring active...');
+            }, 30000); // Check every 30 seconds
+        }
+
+        // Export health data (for integration with hospital systems)
+        function exportHealthData() {
+            if (Object.values(healthData).every(value => value === null)) {
+                showNotification('No health data to export. Please take measurements first.', 'warning');
+                return;
+            }
+
+            const exportData = {
+                timestamp: new Date().toISOString(),
+                patientData: healthData,
+                kioskId: 'KIOSK001',
+                location: 'Village Health Center'
+            };
+
+            // In a real implementation, this would send data to a server
+            console.log('Exporting health data:', exportData);
+            showNotification('Health data exported successfully!', 'success');
+        }
+
+        // Print health report
+        function printHealthReport() {
+            if (Object.values(healthData).every(value => value === null)) {
+                showNotification('No health data to print. Please take measurements first.', 'warning');
+                return;
+            }
+
+            // Create printable report
+            let reportHTML = `
+                <div style="font-family: Arial, sans-serif; padding: 20px;">
+                    <h2 style="color: #2d7a7a;">MediReach Health Report</h2>
+                    <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                    <p><strong>Time:</strong> ${new Date().toLocaleTimeString()}</p>
+                    <hr>
+                    <h3>Vital Signs:</h3>
+            `;
+
+            if (healthData.bp) {
+                reportHTML += `<p><strong>Blood Pressure:</strong> ${healthData.bp.systolic}/${healthData.bp.diastolic} mmHg</p>`;
+            }
+            if (healthData.spo2) {
+                reportHTML += `<p><strong>Oxygen Saturation:</strong> ${healthData.spo2}%</p>`;
+            }
+            if (healthData.heartRate) {
+                reportHTML += `<p><strong>Heart Rate:</strong> ${healthData.heartRate} BPM</p>`;
+            }
+            if (healthData.temperature) {
+                reportHTML += `<p><strong>Temperature:</strong> ${healthData.temperature}°F</p>`;
+            }
+
+            reportHTML += `
+                    <hr>
+                    <p><small>Generated by MediReach AI-Powered Health Kiosk</small></p>
+                </div>
+            `;
+
+            // Open print window
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(reportHTML);
+            printWindow.document.close();
+            printWindow.print();
+            
+            showNotification('Health report ready for printing!', 'success');
+        }
+
+        // Add keyboard shortcuts for accessibility
+        document.addEventListener('keydown', function(event) {
+            // Alt + M for Medicine Database
+            if (event.altKey && event.key === 'm') {
+                showTab('medicines');
+                event.preventDefault();
+            }
+            // Alt + H for Health Monitor
+            if (event.altKey && event.key === 'h') {
+                showTab('monitor');
+                event.preventDefault();
+            }
+            // Alt + C for Consultation
+            if (event.altKey && event.key === 'c') {
+                showTab('consultation');
+                event.preventDefault();
+            }
+        });
+
+        // Voice commands (basic implementation)
+        function initializeVoiceCommands() {
+            if ('speechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                const recognition = new (window.speechRecognition || window.webkitSpeechRecognition)();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = function(event) {
+                    const command = event.results[0][0].transcript.toLowerCase();
+                    
+                    if (command.includes('medicine') || command.includes('medication')) {
+                        showTab('medicines');
+                        showNotification('Opening medicine database', 'info');
+                    } else if (command.includes('blood pressure') || command.includes('bp')) {
+                        showTab('monitor');
+                        measureBP();
+                    } else if (command.includes('oxygen') || command.includes('spo2')) {
+                        showTab('monitor');
+                        measureSpO2();
+                    } else if (command.includes('heart rate') || command.includes('pulse')) {
+                        showTab('monitor');
+                        measureHeartRate();
+                    } else if (command.includes('temperature') || command.includes('fever')) {
+                        showTab('monitor');
+                        measureTemperature();
+                    } else if (command.includes('doctor') || command.includes('consultation')) {
+                        showTab('consultation');
+                        showNotification('Opening consultation form', 'info');
+                    }
+                };
+
+                recognition.onerror = function(event) {
+                    console.log('Voice recognition error:', event.error);
+                };
+
+                // Add voice command button (optional)
+                const voiceButton = document.createElement('button');
+                voiceButton.innerHTML = '🎤 Voice Commands';
+                voiceButton.style.cssText = 'position: fixed; bottom: 20px; right: 20px; padding: 10px 15px; background: #2d7a7a; color: white; border: none; border-radius: 25px; cursor: pointer; z-index: 1000;';
+                voiceButton.onclick = () => {
+                    recognition.start();
+                    showNotification('Listening for voice commands...', 'info');
+                };
+                document.body.appendChild(voiceButton);
+            }
+        }
+
+        // Initialize voice commands on page load
+        setTimeout(initializeVoiceCommands, 2000);
+
+        // Data persistence (using browser storage simulation)
+        function saveHealthData() {
+            // In a real implementation, this would sync with cloud storage
+            const dataToSave = {
+                healthData: healthData,
+                timestamp: new Date().toISOString(),
+                sessionId: 'SESSION_' + Date.now()
+            };
+            
+            console.log('Saving health data:', dataToSave);
+            showNotification('Health data saved successfully!', 'success');
+        }
+
+        // Automatic data saving after each measurement
+        function autoSaveHealthData() {
+            if (Object.values(healthData).some(value => value !== null)) {
+                saveHealthData();
+            }
+        }
+
+        // Call auto-save after each measurement
+        const originalUpdateHealthSummary = updateHealthSummary;
+        updateHealthSummary = function() {
+            originalUpdateHealthSummary();
+            setTimeout(autoSaveHealthData, 1000);
+        };
+
+        // Emergency alert system
+        function checkForEmergencyValues() {
+            let emergencyDetected = false;
+            let emergencyMessage = '';
+
+            if (healthData.bp && (healthData.bp.systolic > 180 || healthData.bp.diastolic > 120)) {
+                emergencyDetected = true;
+                emergencyMessage += 'Severe high blood pressure detected. ';
+            }
+
+            if (healthData.spo2 && healthData.spo2 < 90) {
+                emergencyDetected = true;
+                emergencyMessage += 'Critically low oxygen levels detected. ';
+            }
+
+            if (healthData.temperature && healthData.temperature > 103) {
+                emergencyDetected = true;
+                emergencyMessage += 'Dangerously high fever detected. ';
+            }
+
+            if (healthData.heartRate && (healthData.heartRate > 120 || healthData.heartRate < 50)) {
+                emergencyDetected = true;
+                emergencyMessage += 'Abnormal heart rate detected. ';
+            }
+
+            if (emergencyDetected) {
+                emergencyMessage += 'Please seek immediate medical attention!';
+                showNotification(emergencyMessage, 'error');
+                
+                // Auto-trigger emergency consultation
+                setTimeout(() => {
+                    if (confirm('Emergency values detected! Would you like to connect to emergency consultation immediately?')) {
+                        emergencyConsultation();
+                    }
+                }, 2000);
+            }
+        }
+
+        // Add emergency checking to health summary update
+        const originalUpdateHealthSummaryWithEmergency = updateHealthSummary;
+        updateHealthSummary = function() {
+            originalUpdateHealthSummaryWithEmergency();
+            setTimeout(checkForEmergencyValues, 500);
+        };
+
+        // Multi-language support (basic implementation)
+        const translations = {
+            en: {
+                welcome: 'Welcome to MediReach!',
+                measuring: 'Measuring...',
+                completed: 'Measurement completed!'
+            },
+            hi: {
+                welcome: 'मेडिरीच में आपका स्वागत है!',
+                measuring: 'माप रहे हैं...',
+                completed: 'माप पूरा हो गया!'
+            }
+        };
+
+        function setLanguage(lang) {
+            // This would update UI text based on selected language
+            console.log('Language set to:', lang);
+            showNotification(translations[lang]?.welcome || 'Welcome to MediReach!', 'info');
+        }
+
+        // Add language selector (optional)
+        function addLanguageSelector() {
+            const langSelector = document.createElement('select');
+            langSelector.innerHTML = `
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+            `;
+            langSelector.style.cssText = 'position: fixed; top: 20px; left: 20px; padding: 5px; border-radius: 5px; z-index: 1000;';
+            langSelector.onchange = (e) => setLanguage(e.target.value);
+            document.body.appendChild(langSelector);
+        }
+
+        // Initialize additional features
+        setTimeout(() => {
+            addLanguageSelector();
+        }, 3000);
+
+        // Performance monitoring
+        function logPerformanceMetrics() {
+            if (performance && performance.now) {
+                console.log('Page load time:', performance.now(), 'ms');
+            }
+        }
+
+        // Initialize performance logging
+        window.addEventListener('load', logPerformanceMetrics);
+
+        // Health tips based on measurements
+        function generateHealthTips() {
+            let tips = [];
+
+            if (healthData.bp && healthData.bp.systolic > 130) {
+                tips.push('💡 Tip: Reduce salt intake and exercise regularly to help lower blood pressure.');
+            }
+
+            if (healthData.heartRate && healthData.heartRate > 90) {
+                tips.push('💡 Tip: Practice deep breathing exercises to help lower your heart rate.');
+            }
+
+            if (healthData.temperature && healthData.temperature > 99.5) {
+                tips.push('💡 Tip: Stay hydrated and get plenty of rest to help your body fight infection.');
+            }
+
+            if (healthData.spo2 && healthData.spo2 < 95) {
+                tips.push('💡 Tip: Ensure good ventilation and consider breathing exercises.');
+            }
+
+            if (tips.length > 0) {
+                const tipsHTML = tips.map(tip => `<div style="background: #e8f5e8; padding: 10px; margin: 5px 0; border-radius: 8px; border-left: 4px solid #28a745;">${tip}</div>`).join('');
+                
+                setTimeout(() => {
+                    const summary = document.getElementById('health-summary');
+                    if (summary && !summary.querySelector('.health-tips')) {
+                        const tipsDiv = document.createElement('div');
+                        tipsDiv.className = 'health-tips';
+                        tipsDiv.innerHTML = `<h4 style="color: #2d7a7a; margin: 20px 0 10px 0;">🌟 Personalized Health Tips</h4>${tipsHTML}`;
+                        summary.appendChild(tipsDiv);
+                    }
+                }, 1000);
+            }
+        }
+
+        // Add health tips generation to summary update
+        const originalUpdateHealthSummaryWithTips = updateHealthSummary;
+        updateHealthSummary = function() {
+            originalUpdateHealthSummaryWithTips();
+            setTimeout(generateHealthTips, 1000);
+        };
+    </script>
+</body>
+</html>
